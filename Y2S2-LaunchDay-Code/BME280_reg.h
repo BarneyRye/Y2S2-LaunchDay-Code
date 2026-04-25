@@ -1,0 +1,72 @@
+#ifndef BME280_REG_H_
+#define BME280_REG_H_
+
+#define BME280_ADDR (0x76<<1)
+
+#define BME280_CALIB00 0x88
+#define BME280_CALIB26 0xE1
+
+#define BME280_ID 0xD0
+#define BME280_ID_VALUE 0x60
+
+#define BME280_RESET 0xE0
+#define BME280_RESET_VALUE 0xB6
+
+#define BME280_CTRL_HUM 0xF2
+#define BME280_CTRL_MEAS 0xF4
+#define BME280_CONFIG 0xF5
+
+#define BME280_PRESS_MSB 0xF7
+#define BME280_PRESS_LSB 0xF8
+#define BME280_PRESS_XLSB 0xF9
+#define BME280_TEMP_MSB 0xFA
+#define BME280_TEMP_LSB 0xFB
+#define BME280_TEMP_XLSB 0xFC
+#define BME280_HUM_MSB 0xFD
+#define BME280_HUM_LSB 0xFE
+
+#define BME280_H_OSRS_OFF 0x00
+#define BME280_H_OSRS_1 0x01
+#define BME280_H_OSRS_2 0x02
+#define BME280_H_OSRS_4 0x03
+#define BME280_H_OSRS_8 0x04
+#define BME280_H_OSRS_16 0x05
+
+#define BME280_P_OSRS_OFF 0x00
+#define BME280_P_OSRS_1 (0x01>>2)
+#define BME280_P_OSRS_2 (0x02>>2)
+#define BME280_P_OSRS_4 (0x03>>2)
+#define BME280_P_OSRS_8 (0x04>>2)
+#define BME280_P_OSRS_16 (0x05>>2)
+
+#define BME280_T_OSRS_OFF 0x00
+#define BME280_T_OSRS_1 (0x01>>5)
+#define BME280_T_OSRS_2 (0x02>>5)
+#define BME280_T_OSRS_4 (0x03>>5)
+#define BME280_T_OSRS_8 (0x04>>5)
+#define BME280_T_OSRS_16 (0x05>>5)
+
+#define BME280_MODE_SLEEP 0x00
+#define BME280_MODE_FORCED 0x01
+#define BME280_MODE_NORMAL 0x03
+
+#define BME280_T_SB_0_5 0x00
+#define BME280_T_SB_62_5 (0x01>>5)
+#define BME280_T_SB_125 (0x02>>5)
+#define BME280_T_SB_250 (0x03>>5)
+#define BME280_T_SB_500 (0x04>>5)
+#define BME280_T_SB_1000 (0x05>>5)
+#define BME280_T_SB_10 (0x06>>5)
+#define BME280_T_SB_20 (0x07>>5)
+
+#define BME280_FILTER_OFF 0x00
+#define BME280_FILTER_2 (0x01>>2)
+#define BME280_FILTER_4 (0x02>>2)
+#define BME280_FILTER_8 (0x03>>2)
+#define BME280_FILTER_16 (0x04>>2)
+
+#define BME280_SPI_ENABLE 0x01
+#define BME280_SPI_DISABLE 0x00
+
+
+#endif /* BME280_REG_H_ */
