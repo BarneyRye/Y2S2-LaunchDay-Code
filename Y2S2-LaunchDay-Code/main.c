@@ -55,7 +55,7 @@ int main(void){
             index = 0;
 			logCounts++;
         }
-        if (logCounts % (16*3) == 0) {
+        if (logCounts % 3 == 0) {
             fileSync();
         }
         if (logCounts >= totalLogs) {
