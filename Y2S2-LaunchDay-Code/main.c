@@ -33,8 +33,35 @@ int main(void){
     BMI270_config();
     init_SD_card(&calibData);
 
-    while (1) {
+    uint32_t startTime = timestamp();
+    static uint8_t index = 0;
+    static uint32_t logCounts = 0;
+    static uint8_t isLogging = 1;
 
+    while (isLogging) {
+        while (timestamp()-startTime < (1000/50)) { _delay_us(500); }
+        data[index].timestamp = timestamp();
+        BME280_readData(&data[index]);
+        BMI270_readData(&data[index]);
+        index++;
+        logCounts++;
+        if (index >= BUFFERSIZE) {
+            SD_sample_write(data);
+            index = 0;
+        }
+        if (logCounts % (16*3) == 0) {
+            fileSync();
+        }
+        if (logCounts >= (50 * 60 *60)) {
+            fileClose();
+            isLogging = 0;
+        }
+    }
+    while(1) {
+        PORTD |= (1 << PD7);
+        _delay_ms(250);
+        PORTD &= ~(1 << PD7);
+        _delay_ms(750);
     }
 }
 
