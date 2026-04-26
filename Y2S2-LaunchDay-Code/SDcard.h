@@ -15,6 +15,6 @@ void    init_sd_card(calibData_t *calibData);
 void	SD_sample_write(dataLog_t *data);
 void    fileSync();
 void    fileClose();
-DWORD	get_fattime(void);
+void	get_fattime(void);
 
 #endif /* SDCARD_H_ */

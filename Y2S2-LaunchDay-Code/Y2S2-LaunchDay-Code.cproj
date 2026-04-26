@@ -120,7 +120,28 @@
     </ToolchainSettings>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="BME280.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="BME280.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="BME280_reg.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="BMI270.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="BMI270.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="BMI270_reg.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="ccsbcs_avr.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="datastructs.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="diskio.h">
@@ -154,6 +175,12 @@
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="SDcard.h">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="timer.c">
+      <SubType>compile</SubType>
+    </Compile>
+    <Compile Include="timer.h">
       <SubType>compile</SubType>
     </Compile>
   </ItemGroup>

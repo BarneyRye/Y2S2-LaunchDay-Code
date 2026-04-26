@@ -8,9 +8,6 @@
 #include "BMI270.h"
 #include "BMI270_reg.h"
 
-
-
-
 const uint8_t bmi270_config_file[8192] PROGMEM = {
 	0xc8, 0x2e, 0x00, 0x2e, 0x80, 0x2e, 0x3d, 0xb1, 0xc8, 0x2e, 0x00, 0x2e, 0x80, 0x2e, 0x91, 0x03, 0x80, 0x2e, 0xbc,
 	0xb0, 0x80, 0x2e, 0xa3, 0x03, 0xc8, 0x2e, 0x00, 0x2e, 0x80, 0x2e, 0x00, 0xb0, 0x50, 0x30, 0x21, 0x2e, 0x59, 0xf5,
@@ -446,20 +443,23 @@ const uint8_t bmi270_config_file[8192] PROGMEM = {
 	0x2e, 0x00, 0xc1
 };
     
-void bmi270_config(void){
-
-    I2C_MasterTrasnmitByte(BMI270_address, BMI270_SOFTRESET, BMI270_SOFTRESET_VAL);
+void BMI270_config(void){
+	
+	unsigned char bmi270_config_byte;
+	unsigned int ii;
+	
+    I2C_MasterTransmitByte(BMI270_address, BMI270_SOFTRESET, BMI270_SOFTRESET_VAL);
     _delay_ms(100);
 
-    char ID = I2C_MasterReceiveData(BMI270_address, BMI270_CHIPID);
+    char ID = I2C_MasterReceiveByte(BMI270_address, BMI270_CHIPID);
     if (ID != BMI270_CHIPID_VAL){
         PORTD |= (1<<PD3);
         return;
     }
 
-    I2C_MasterTrasnmitByte(BMI270_address, BMI270_PWR_CONF, BMI270_PWR_CONF_VAL);
+    I2C_MasterTransmitByte(BMI270_address, BMI270_POWER_CONF, BMI270_POWER_CONF_VAL);
     _delay_us(500);
-    I2C_MasterTrasnmitByte(BMI270_address, BMI270_INIT_CTRL, BMI270_INIT_CTRL_START);
+    I2C_MasterTransmitByte(BMI270_address, BMI270_INIT_CTRL, BMI270_INIT_CTRL_START);
 
     I2C_start();
 	I2C_MasterTransmitAddress(BMI270_address,0x5e);
@@ -474,10 +474,10 @@ void bmi270_config(void){
 	I2C_stop();
 
     _delay_us(500);
-    I2C_MasterTrasnmitByte(BMI270_address, BMI270_INIT_CTRL, BMI270_INIT_CTRL_STOP);
+    I2C_MasterTransmitByte(BMI270_address, BMI270_INIT_CTRL, BMI270_INIT_CTRL_END);
     _delay_ms(100);
 
-    char status = I2C_MasterReceiveData(BMI270_address, BMI270_INIT_STATUS);
+    char status = I2C_MasterReceiveByte(BMI270_address, BMI270_INIT_STATUS);
     if (status != BMI270_INIT_STATUS_VAL){
         PORTD |= (1<<PD3);
         return;
@@ -487,13 +487,14 @@ void bmi270_config(void){
     I2C_MasterTransmitByte(BMI270_address, ACC_RANGE_address, ACC_RANGE_16g);
     I2C_MasterTransmitByte(BMI270_address, GYR_CONF_address, GYR_ODR_50Hz);
     I2C_MasterTransmitByte(BMI270_address, GYR_RANGE_address, GYR_RANGE_2000dps);
+    I2C_MasterTransmitByte(BMI270_address, BMI270_POWER_CTRL, BMI270_POWER_CTRL_VAL);
 }
 
 void BMI270_getData(dataLog_t *data) {
-    data->acc_x = (int16_t)(I2C_MasterReceiveData(BMI270_address, ACC_X_LSB) | (I2C_MasterReceiveData(BMI270_address, ACC_X_MSB) << 8));
-    data->acc_y = (int16_t)(I2C_MasterReceiveData(BMI270_address, ACC_Y_LSB) | (I2C_MasterReceiveData(BMI270_address, ACC_Y_MSB) << 8));
-    data->acc_z = (int16_t)(I2C_MasterReceiveData(BMI270_address, ACC_Z_LSB) | (I2C_MasterReceiveData(BMI270_address, ACC_Z_MSB) << 8));
-    data->gyro_x = (int16_t)(I2C_MasterReceiveData(BMI270_address, GYR_X_LSB) | (I2C_MasterReceiveData(BMI270_address, GYR_X_MSB) << 8));
-    data->gyro_y = (int16_t)(I2C_MasterReceiveData(BMI270_address, GYR_Y_LSB) | (I2C_MasterReceiveData(BMI270_address, GYR_Y_MSB) << 8));
-    data->gyro_z = (int16_t)(I2C_MasterReceiveData(BMI270_address, GYR_Z_LSB) | (I2C_MasterReceiveData(BMI270_address, GYR_Z_MSB) << 8));
+    data->acc_x = (int16_t)(I2C_MasterReceiveByte(BMI270_address, ACC_X_LSB) | ((uint8_t)I2C_MasterReceiveByte(BMI270_address, ACC_X_MSB) << 8));
+    data->acc_y = (int16_t)(I2C_MasterReceiveByte(BMI270_address, ACC_Y_LSB) | ((uint8_t)I2C_MasterReceiveByte(BMI270_address, ACC_Y_MSB) << 8));
+    data->acc_z = (int16_t)(I2C_MasterReceiveByte(BMI270_address, ACC_Z_LSB) | ((uint8_t)I2C_MasterReceiveByte(BMI270_address, ACC_Z_MSB) << 8));
+    data->gyro_x = (int16_t)(I2C_MasterReceiveByte(BMI270_address, GYR_X_LSB) | ((uint8_t)I2C_MasterReceiveByte(BMI270_address, GYR_X_MSB) << 8));
+    data->gyro_y = (int16_t)(I2C_MasterReceiveByte(BMI270_address, GYR_Y_LSB) | ((uint8_t)I2C_MasterReceiveByte(BMI270_address, GYR_Y_MSB) << 8));
+    data->gyro_z = (int16_t)(I2C_MasterReceiveByte(BMI270_address, GYR_Z_LSB) | ((uint8_t)I2C_MasterReceiveByte(BMI270_address, GYR_Z_MSB) << 8));
 }

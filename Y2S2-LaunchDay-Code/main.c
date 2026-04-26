@@ -20,6 +20,7 @@
 #include "BMI270_reg.h"
 
 #define BUFFERSIZE 16
+#define LOGRATE 50 //HZ
 
 calibData_t calibData;
 dataLog_t data[BUFFERSIZE];
@@ -27,32 +28,37 @@ dataLog_t data[BUFFERSIZE];
 
 int main(void){
 
-    TIM0_init();
-    i2C_init();
+    DDRD |= (0x1F << PD3);
+
+    I2C_MasterInit();
     BME280_config(&calibData);
     BMI270_config();
-    init_SD_card(&calibData);
+    init_sd_card(&calibData);
+    TIM0_init();
 
     uint32_t startTime = timestamp();
     static uint8_t index = 0;
     static uint32_t logCounts = 0;
     static uint8_t isLogging = 1;
+	static uint32_t totalLogs = LOGRATE*(3600/BUFFERSIZE);
 
+    PORTD |= (1<<PD7);
     while (isLogging) {
-        while (timestamp()-startTime < (1000/50)) { _delay_us(500); }
+        while (timestamp()-startTime < (1000/LOGRATE)) { _delay_us(500); }
+        startTime += (1000/LOGRATE);
         data[index].timestamp = timestamp();
-        BME280_readData(&data[index]);
-        BMI270_readData(&data[index]);
+        BME280_getData(&data[index]);
+        BMI270_getData(&data[index]);
         index++;
-        logCounts++;
         if (index >= BUFFERSIZE) {
             SD_sample_write(data);
             index = 0;
+			logCounts++;
         }
         if (logCounts % (16*3) == 0) {
             fileSync();
         }
-        if (logCounts >= (50 * 60 *60)) {
+        if (logCounts >= totalLogs) {
             fileClose();
             isLogging = 0;
         }
