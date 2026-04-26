@@ -12,6 +12,12 @@
 
 #include "datastructs.h"
 #include "timer.h"
+#include "my_I2C.h"
+#include "SDcard.h"
+#include "BME280.h"
+#include "BME280_reg.h"
+#include "BMI270.h"
+#include "BMI270_reg.h"
 
 #define BUFFERSIZE 16
 
@@ -24,6 +30,8 @@ int main(void){
     TIM0_init();
     i2C_init();
     BME280_config(&calibData);
+    BMI270_config();
+    init_SD_card(&calibData);
 
     while (1) {
 
