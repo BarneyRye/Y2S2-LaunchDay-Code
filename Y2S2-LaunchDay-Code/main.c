@@ -40,7 +40,7 @@ int main(void){
     static uint8_t index = 0;
     static uint32_t logCounts = 0;
     static uint8_t isLogging = 1;
-	static uint32_t totalLogs = LOGRATE*(3600/BUFFERSIZE);
+	const static uint32_t totalLogs = LOGRATE*(3600/BUFFERSIZE);
 
     PORTD |= (1<<PD7);
     while (isLogging) {
