@@ -20,7 +20,8 @@
 #include "BMI270_reg.h"
 
 #define BUFFERSIZE 16
-#define LOGRATE 50 //HZ
+#define LOGRATE 100 //HZ
+#define LOGTIME 2 //Hours
 
 calibData_t calibData;
 dataLog_t data[BUFFERSIZE];
@@ -40,7 +41,7 @@ int main(void){
     static uint8_t index = 0;
     static uint32_t logCounts = 0;
     static uint8_t isLogging = 1;
-	const static uint32_t totalLogs = LOGRATE*(3600/BUFFERSIZE);
+	const static uint32_t totalLogs = (LOGRATE*LOGTIME*3600UL)/BUFFERSIZE;
 
     PORTD |= (1<<PD7);
     while (isLogging) {
@@ -55,7 +56,7 @@ int main(void){
             index = 0;
 			logCounts++;
         }
-        if (logCounts % 3 == 0) {
+        if (logCounts % 6 == 0) {
             fileSync();
         }
         if (logCounts >= totalLogs) {
