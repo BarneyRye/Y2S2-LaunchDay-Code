@@ -13,8 +13,24 @@
 #include "diskio.h"
 #include "ff.h"
 
+static uint8_t filename_index = 0;
+
 FATFS fs;		/* Filesystem object for each logical drive */
 FIL fp;
+
+static void getFilename(uint8_t *index) {
+	FRESULT res;
+	char temp[20];
+	for (uint8_t i = 0; i <= 99; i++) {
+		snprintf(temp, sizeof(temp), "dataLog%02d.bin", i);
+		res = f_open(&fp, temp, FA_CREATE_NEW | FA_WRITE);
+		if (res == FR_OK) {
+			*index = i;
+			f_close(&fp);
+			break;
+		}
+	}
+}
 
 void init_sd_card(calibData_t *calibData)
 {
@@ -32,9 +48,11 @@ void init_sd_card(calibData_t *calibData)
 		_delay_ms(1000);
 	}
 
-
+	getFilename(&filename_index);
 	/* Open file and write calibration struct as raw binary */
-	rc = f_open(&fp,"calibData.bin", FA_WRITE | FA_CREATE_ALWAYS);
+	char filename[20];
+	snprintf(filename, sizeof(filename), "calibData%02d.bin", filename_index);
+	rc = f_open(&fp,filename, FA_WRITE | FA_CREATE_ALWAYS);
 	if (rc == FR_OK){
 		// Red LED on if opened
 	
@@ -53,7 +71,8 @@ void init_sd_card(calibData_t *calibData)
 	// Close file to ensure data is saved
 	rc = f_close(&fp);
 
-	rc = f_open(&fp,"dataLog.bin", FA_WRITE | FA_CREATE_ALWAYS);
+	snprintf(filename, sizeof(filename), "dataLog%02d.bin", filename_index);
+	rc = f_open(&fp,filename, FA_OPEN_EXISTING | FA_WRITE);
 	if (rc == FR_OK) {
 		// Red LED on if data written
 		PORTD|=1<<PD5;
